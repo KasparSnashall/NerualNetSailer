@@ -4,7 +4,7 @@ This file will run the sailing game.
 The goal is to get up the course as quickly as possible
 """
 
-
+import asyncio # going to run several things at the same time
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
