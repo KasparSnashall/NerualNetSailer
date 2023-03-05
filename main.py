@@ -5,9 +5,9 @@ The goal is to get up the course as quickly as possible
 """
 
 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import numpy as np
-
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 class SailGame():
     def __init__(self) -> None:
         self.acceleration = [0,0] # x,7 acceleration
@@ -23,8 +23,28 @@ class SailGame():
         """
         This will run the game
         """
+        x = np.linspace(0, 10, 20)
+        y = np.cos(x)
+        image_path = 'Boat.png'
+        fig, ax = plt.subplots()
+        self.imscatter(x, y, image_path, zoom=0.1, ax=ax)
+        ax.plot(x, y)
+        plt.show()
 
-        pass
+    def imscatter(self,x, y, image, ax=None, zoom=1):
+        if ax is None:
+            ax = plt.gca()
+        image = plt.imread(image)
+
+        im = OffsetImage(image, zoom=zoom)
+        x, y = np.atleast_1d(x, y)
+        artists = []
+        for x0, y0 in zip(x, y):
+            ab = AnnotationBbox(im, (x0, y0), xycoords='data', frameon=False)
+            artists.append(ax.add_artist(ab))
+        ax.update_datalim(np.column_stack([x, y]))
+        ax.autoscale()
+        return artists
 
     def acceleration(self):
         """
@@ -50,4 +70,4 @@ class SailGame():
         pass
 
 if __name__ == "__main__":
-    SailGame.main()
+    SailGame().main()
