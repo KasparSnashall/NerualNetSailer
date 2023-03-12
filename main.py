@@ -9,10 +9,13 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from numpy import sin, cos
 class SailGame():
     def __init__(self) -> None:
         self.acceleration = [0,0] # x,7 acceleration
-        self.velocity = [0,0] # x,y velocty vector, assume boat always travels in direction of velocity
+        self.x_velocity = 0
+        self.y_velocty = 0
+        self.velocity = [self.x_velocity,self.y_velocity] # x,y velocty vector, assume boat always travels in direction of velocity
         self.position = [0,0] # x,y position
         self.windvector = [-0.5,-0.5] # a simple wind vector # decomposed to cartesian
         self.maxspeed = 5 # m/s # boats wont go much faster then this
@@ -41,11 +44,12 @@ class SailGame():
         """
         pass
 
-    def change_direction(self):
+    def change_direction(self, rotation):
         """
         Will take an input to change direction
         """
-        pass
+        self.x_velocity = self.x_velocity*cos(rotation) - sin(rotation)*self.y_velocty
+        self.y_velocty = self.x_velocity*cos(rotation) + cos(rotation)*self.y_velocty
     
     def setup_race_course(self):
         """
