@@ -6,6 +6,7 @@ The goal is to get up the course as quickly as possible
 
 import asyncio # going to run several things at the same time
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 class SailGame():
@@ -23,28 +24,16 @@ class SailGame():
         """
         This will run the game
         """
-        x = np.linspace(0, 10, 20)
-        y = np.cos(x)
-        image_path = 'Boat.png'
         fig, ax = plt.subplots()
-        self.imscatter(x, y, image_path, zoom=0.1, ax=ax)
-        ax.plot(x, y)
+        for rot in [0, 15, 30, 45, 60, 90, 110, 180, 210, 315, 360]:
+
+            marker, scale = self.gen_arrow_head_marker(rot)
+            markersize = 25
+            ax.scatter(rot, 0, marker=marker, s=(markersize*scale)**2)
+
+        ax.set_xlabel('Rotation in degree')
+
         plt.show()
-
-    def imscatter(self,x, y, image, ax=None, zoom=1):
-        if ax is None:
-            ax = plt.gca()
-        image = plt.imread(image)
-
-        im = OffsetImage(image, zoom=zoom)
-        x, y = np.atleast_1d(x, y)
-        artists = []
-        for x0, y0 in zip(x, y):
-            ab = AnnotationBbox(im, (x0, y0), xycoords='data', frameon=False)
-            artists.append(ax.add_artist(ab))
-        ax.update_datalim(np.column_stack([x, y]))
-        ax.autoscale()
-        return artists
 
     def acceleration(self):
         """
@@ -68,6 +57,50 @@ class SailGame():
         self.min_y = 0
 
         pass
+    
+    def gen_arrow_head_marker(self, rot):
+
+        """generate a marker to plot with matplotlib scatter, plot, ...
+
+        https://matplotlib.org/stable/api/markers_api.html#module-matplotlib.markers
+
+        rot=0: positive x direction
+        Parameters
+        ----------
+        rot : float
+            rotation in degree
+            0 is positive x direction
+
+        Returns
+        -------
+        arrow_head_marker : Path
+            use this path for marker argument of plt.scatter
+        scale : float
+            multiply a argument of plt.scatter with this factor got get markers
+            with the same size independent of their rotation.
+            Paths are autoscaled to a box of size -1 <= x, y <= 1 by plt.scatter
+        
+        From https://stackoverflow.com/questions/23345565/is-it-possible-to-control-matplotlib-marker-orientation v
+
+
+        """
+        arr = np.array([[.1, .3], [.1, -.3], [1, 0], [.1, .3]])  # arrow shape
+        angle = rot / 180 * np.pi
+        rot_mat = np.array([
+            [np.cos(angle), np.sin(angle)],
+            [-np.sin(angle), np.cos(angle)]
+            ])
+        arr = np.matmul(arr, rot_mat)  # rotates the arrow
+
+        # scale
+        x0 = np.amin(arr[:, 0])
+        x1 = np.amax(arr[:, 0])
+        y0 = np.amin(arr[:, 1])
+        y1 = np.amax(arr[:, 1])
+        scale = np.amax(np.abs([x0, x1, y0, y1]))
+        codes = [mpl.path.Path.MOVETO, mpl.path.Path.LINETO,mpl.path.Path.LINETO, mpl.path.Path.CLOSEPOLY]
+        arrow_head_marker = mpl.path.Path(arr, codes)
+        return arrow_head_marker, scale
 
 if __name__ == "__main__":
     SailGame().main()
