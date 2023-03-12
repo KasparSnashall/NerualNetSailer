@@ -1,7 +1,12 @@
 """
 This file will run the sailing game.
 
-The goal is to get up the course as quickly as possible
+The goal is to get up the course and across the finish line as quickly as possible
+
+Some intial basic rules:
+Boats cannot sail directly upwind
+Boats acceleration depends on the angle to the wind
+
 """
 
 import asyncio # going to run several things at the same time
@@ -59,8 +64,8 @@ class SailGame():
         self.max_y = 500 # also defines the win condition
         self.min_x = -100 
         self.min_y = 0
-
-        pass
+        self.start_line_y = 25 # the start line
+        self.finish_line_y = 450 # the finish line, intially just a line
     
     def gen_arrow_head_marker(self, rot):
 
@@ -84,7 +89,7 @@ class SailGame():
             with the same size independent of their rotation.
             Paths are autoscaled to a box of size -1 <= x, y <= 1 by plt.scatter
         
-        From https://stackoverflow.com/questions/23345565/is-it-possible-to-control-matplotlib-marker-orientation v
+        From https://stackoverflow.com/questions/23345565/is-it-possible-to-control-matplotlib-marker-orientation
 
 
         """
