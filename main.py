@@ -31,7 +31,7 @@ class SailGame(arcade.Window):
         self.x_velocity = 0
         self.y_velocity = 0
         self.velocity = [self.x_velocity, self.y_velocity] # x,y velocty vector, assume boat always travels in direction of velocity
-        self.position = [0,0] # x,y position
+        self.position = [100,100] # x,y position
         self.windvector = [-0.5,-0.5] # a simple wind vector # decomposed to cartesian
         self.maxspeed = 5 # m/s # boats wont go much faster then this
         self.MAXTIME = 5000 # maximum amount of time before race ends
@@ -43,21 +43,6 @@ class SailGame(arcade.Window):
         self.player_sprite = None
         self.score = 0
         self.set_mouse_visible(False)
-
-    def main(self):
-        """
-        This will run the game
-        """
-        #fig, ax = plt.subplots()
-        #for rot in [0, 15, 30, 45, 60, 90, 110, 180, 210, 315, 360]:
-
-        #    marker, scale = self.gen_arrow_head_marker(rot)
-        #    markersize = 25
-        #    ax.scatter(rot, 0, marker=marker, s=(markersize*scale)**2)
-
-        #ax.set_xlabel('Rotation in degree')
-
-        #plt.show()
         
     def acceleration(self):
         """
@@ -87,9 +72,9 @@ class SailGame(arcade.Window):
         """ Set up the game variables. Call to re-start the game. """
         # Create your sprites and sprite lists here
         self.player_list = arcade.SpriteList()
-        self.player_sprite = arcade.Sprite("Boat.png", 0.1)
-        self.player_sprite.center_x = 150
-        self.player_sprite.center_y = 150
+        self.player_sprite = arcade.Sprite("Boat.png", 0.05)
+        self.player_sprite.center_x = self.position[0]
+        self.player_sprite.center_y = self.position[1]
         self.player_list.append(self.player_sprite)
 
     def on_draw(self):
