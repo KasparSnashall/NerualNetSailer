@@ -39,6 +39,11 @@ class SailGame(arcade.Window):
         #self.setup_race_course()
         arcade.set_background_color(arcade.color.SEA_BLUE)
 
+        self.player_list = None
+        self.player_sprite = None
+        self.score = 0
+        self.set_mouse_visible(False)
+
     def main(self):
         """
         This will run the game
@@ -81,7 +86,11 @@ class SailGame(arcade.Window):
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
         # Create your sprites and sprite lists here
-        pass
+        self.player_list = arcade.SpriteList()
+        self.player_sprite = arcade.Sprite("Boat.png", 0.1)
+        self.player_sprite.center_x = 150
+        self.player_sprite.center_y = 150
+        self.player_list.append(self.player_sprite)
 
     def on_draw(self):
         """
@@ -91,7 +100,7 @@ class SailGame(arcade.Window):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
-
+        self.player_list.draw()
         # Call draw() on all your sprite lists below
 
     def on_update(self, delta_time):
