@@ -7,6 +7,9 @@ Some intial basic rules:
 Boats cannot sail directly upwind
 Boats acceleration depends on the angle to the wind
 
+Arcade will be used to make the game, 
+we will try to keep game and display logic seperately
+
 """
 
 import asyncio # going to run several things at the same time
@@ -15,34 +18,42 @@ import matplotlib as mpl
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from numpy import sin, cos
-class SailGame():
-    def __init__(self) -> None:
+import arcade # using this for the game
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+SCREEN_TITLE = "Neural Net Sailer"
+
+class SailGame(arcade.Window):
+    def __init__(self, width, height, title) -> None:
+        super().__init__(width, height, title)
         self.acceleration = [0,0] # x,7 acceleration
         self.x_velocity = 0
-        self.y_velocty = 0
-        self.velocity = [self.x_velocity,self.y_velocity] # x,y velocty vector, assume boat always travels in direction of velocity
+        self.y_velocity = 0
+        self.velocity = [self.x_velocity, self.y_velocity] # x,y velocty vector, assume boat always travels in direction of velocity
         self.position = [0,0] # x,y position
         self.windvector = [-0.5,-0.5] # a simple wind vector # decomposed to cartesian
         self.maxspeed = 5 # m/s # boats wont go much faster then this
         self.MAXTIME = 5000 # maximum amount of time before race ends
         self.racefinished = False # finished flag
-        self.setup_race_course()
+        #self.setup_race_course()
+        arcade.set_background_color(arcade.color.SEA_BLUE)
 
     def main(self):
         """
         This will run the game
         """
-        fig, ax = plt.subplots()
-        for rot in [0, 15, 30, 45, 60, 90, 110, 180, 210, 315, 360]:
+        #fig, ax = plt.subplots()
+        #for rot in [0, 15, 30, 45, 60, 90, 110, 180, 210, 315, 360]:
 
-            marker, scale = self.gen_arrow_head_marker(rot)
-            markersize = 25
-            ax.scatter(rot, 0, marker=marker, s=(markersize*scale)**2)
+        #    marker, scale = self.gen_arrow_head_marker(rot)
+        #    markersize = 25
+        #    ax.scatter(rot, 0, marker=marker, s=(markersize*scale)**2)
 
-        ax.set_xlabel('Rotation in degree')
+        #ax.set_xlabel('Rotation in degree')
 
-        plt.show()
-
+        #plt.show()
+        
     def acceleration(self):
         """
         Function to describe the effect of acceleration on the speed vector
@@ -67,49 +78,65 @@ class SailGame():
         self.start_line_y = 25 # the start line
         self.finish_line_y = 450 # the finish line, intially just a line
     
-    def gen_arrow_head_marker(self, rot):
+    def setup(self):
+        """ Set up the game variables. Call to re-start the game. """
+        # Create your sprites and sprite lists here
+        pass
 
-        """generate a marker to plot with matplotlib scatter, plot, ...
-
-        https://matplotlib.org/stable/api/markers_api.html#module-matplotlib.markers
-
-        rot=0: positive x direction
-        Parameters
-        ----------
-        rot : float
-            rotation in degree
-            0 is positive x direction
-
-        Returns
-        -------
-        arrow_head_marker : Path
-            use this path for marker argument of plt.scatter
-        scale : float
-            multiply a argument of plt.scatter with this factor got get markers
-            with the same size independent of their rotation.
-            Paths are autoscaled to a box of size -1 <= x, y <= 1 by plt.scatter
-        
-        From https://stackoverflow.com/questions/23345565/is-it-possible-to-control-matplotlib-marker-orientation
-
-
+    def on_draw(self):
         """
-        arr = np.array([[.1, .3], [.1, -.3], [1, 0], [.1, .3]])  # arrow shape
-        angle = rot / 180 * np.pi
-        rot_mat = np.array([
-            [np.cos(angle), np.sin(angle)],
-            [-np.sin(angle), np.cos(angle)]
-            ])
-        arr = np.matmul(arr, rot_mat)  # rotates the arrow
+        Render the screen.
+        """
 
-        # scale
-        x0 = np.amin(arr[:, 0])
-        x1 = np.amax(arr[:, 0])
-        y0 = np.amin(arr[:, 1])
-        y1 = np.amax(arr[:, 1])
-        scale = np.amax(np.abs([x0, x1, y0, y1]))
-        codes = [mpl.path.Path.MOVETO, mpl.path.Path.LINETO,mpl.path.Path.LINETO, mpl.path.Path.CLOSEPOLY]
-        arrow_head_marker = mpl.path.Path(arr, codes)
-        return arrow_head_marker, scale
+        # This command should happen before we start drawing. It will clear
+        # the screen to the background color, and erase what we drew last frame.
+        self.clear()
+
+        # Call draw() on all your sprite lists below
+
+    def on_update(self, delta_time):
+        """
+        All the logic to move, and the game logic goes here.
+        Normally, you'll call update() on the sprite lists that
+        need it.
+        """
+        pass
+
+    def on_key_press(self, key, key_modifiers):
+        """
+        Called whenever a key on the keyboard is pressed.
+
+        For a full list of keys, see:
+        https://api.arcade.academy/en/latest/arcade.key.html
+        """
+        pass
+
+    def on_key_release(self, key, key_modifiers):
+        """
+        Called whenever the user lets off a previously pressed key.
+        """
+        pass
+
+    def on_mouse_motion(self, x, y, delta_x, delta_y):
+        """
+        Called whenever the mouse moves.
+        """
+        pass
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        """
+        Called when the user presses a mouse button.
+        """
+        pass
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        """
+        Called when a user releases a mouse button.
+        """
+        pass
+
 
 if __name__ == "__main__":
-    SailGame().main()
+    game = SailGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    game.setup()
+    arcade.run()
