@@ -29,7 +29,7 @@ class Player(arcade.Sprite):
     Player class
     """
     def update(self):
-           # Move player.
+        # Move player.
         # Remove these lines if physics engine is moving player.
         self.center_x += self.change_x
         self.center_y += self.change_y
@@ -92,7 +92,7 @@ class SailGame(arcade.Window):
         """ Set up the game variables. Call to re-start the game. """
         # Create your sprites and sprite lists here
         self.player_list = arcade.SpriteList()
-        self.player_sprite = arcade.Sprite("Boat.png", 0.05)
+        self.player_sprite = Player("Boat.png", 0.05)
         self.player_sprite.center_x = self.position[0]
         self.player_sprite.center_y = self.position[1]
         self.player_list.append(self.player_sprite)
