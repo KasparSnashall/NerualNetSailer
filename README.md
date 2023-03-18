@@ -10,8 +10,7 @@ Note boats cannot sail upwind directly and so there will be a limited number of 
 ## How will this be made
 I intend to write this whole thing in python 3.10. I dont want to make it too complex but it will be interesting to see how the time element of the game plays in reality. 
 
-## Some intial questions
-Neural networks for image analysis seem pretty clear cut in their function. But how do neuralk networks deal with time based data or instantaneous decisions? Do we intend to just give it a set of time series to learn from. Or do we make it a decision based approach, based on the previous decisions made. 
+After some intial research it appears reinforcement learning such as deep Q learning might be exactly what I need to train my AI to play. Of course the game needs to be written first. Will use Keras API as the basis for the machine learning, I suspect my GPU will be getting a work out shortly. 
 
 
 
