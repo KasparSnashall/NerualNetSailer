@@ -1,5 +1,5 @@
 # NerualNetSailer
-This repo is dedicated to learning neural networks using a sailing game. The goal is to create an AI that can sail fastest round a simple course. I relase this readme is starting to get a little long and so will be generating a wiki with my thought porcesses. 
+This repo is dedicated to learning neural networks using a sailing game. The goal is to create an AI that can sail fastest round a simple course. I realise this readme is starting to get a little long and so will be generating a wiki with my thought porcesses. 
 
 ## The idea
 I have always enjoyed sailing, recently I have had some interest in neural netowrks and how they work. So I though hey why not make a neural network that can play a sailing game? The idea is fairly simple we will first make the game, this might be simple to begin with. It will involve making a simple sailing simulator which has a boat going round a course. There will be wind (constant from one direction) the boat will have a velocity, acceleration (up to a max velocity) and some initial starting direction on a race line. (This might be one of two directions along some line).
@@ -9,7 +9,7 @@ Note boats cannot sail upwind directly and so there will be a limited number of 
 
 ## Physics
 I found a pretty useful graph on the physics of sailing on the IOP website. Will have to try and replicate this in mathematical form. Or possibly a simple interpolation will do. 
-No indication on the acceleration though so this will have to be thought about. FOrinstance a great way of gain speed used to be going for a reach before turning upwind especially in light conditions. 
+No indication on the acceleration though so this will have to be thought about. For instance a great way of gain speed used to be going for a reach before turning upwind especially in light conditions. Might have to fully replicate force to see if the machine learns about pumping. 
 
 https://physicstoday.scitation.org/doi/pdf/10.1063/1.2883908 
 
