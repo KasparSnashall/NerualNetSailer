@@ -24,15 +24,19 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Neural Net Sailer"
 
-class Player(arcade.Sprite):
+class Boat(arcade.Sprite):
     """
     Player class
     """
+    sail_line = 0.5 # between 0 and 1 defines how far the sail is in
+    
     def update(self):
         # Move player.
         # Remove these lines if physics engine is moving player.
+        # Will need to add the accelaeration and velocity in here
         self.center_x += self.change_x
         self.center_y += self.change_y
+        #self.angle += degrees # nicely rotates the boat but needs control
 
         # Check for out-of-bounds
         if self.left < 0:
@@ -44,6 +48,9 @@ class Player(arcade.Sprite):
             self.bottom = 0
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1 
+        
+
+
 class SailGame(arcade.Window):
     def __init__(self, width, height, title) -> None:
         super().__init__(width, height, title)
@@ -68,14 +75,18 @@ class SailGame(arcade.Window):
         """
         Function to describe the effect of acceleration on the speed vector
         """
+        # needs to take into account the angle of the wind to the boat
+        # if sub 20 degrees to the wind it will need to be negative
+        # Probably want a cardiod shape otherwise
+        
         pass
 
-    def change_direction(self, rotation):
-        """
-        Will take an input to change direction
-        """
-        self.x_velocity = self.x_velocity*cos(rotation) - sin(rotation)*self.y_velocty
-        self.y_velocty = self.x_velocity*cos(rotation) + cos(rotation)*self.y_velocty
+    #def change_direction(self, rotation):
+    #    """
+    #    Will take an input to change direction
+    #    """
+    #    self.x_velocity = self.x_velocity*cos(rotation) - sin(rotation)*self.y_velocty
+    #    self.y_velocty = self.x_velocity*cos(rotation) + cos(rotation)*self.y_velocty
     
     def setup_race_course(self):
         """
@@ -92,7 +103,7 @@ class SailGame(arcade.Window):
         """ Set up the game variables. Call to re-start the game. """
         # Create your sprites and sprite lists here
         self.player_list = arcade.SpriteList()
-        self.player_sprite = Player("Boat.png", 0.05)
+        self.player_sprite = Boat("Boat.png", 0.05)
         self.player_sprite.center_x = self.position[0]
         self.player_sprite.center_y = self.position[1]
         self.player_list.append(self.player_sprite)
@@ -127,6 +138,8 @@ class SailGame(arcade.Window):
         """
 
          # If the player presses a key, update the speed
+         # This will in the future either control the tiller or control the line
+         # The position will have to change dependent on acceleration
         if key == arcade.key.UP:
             self.player_sprite.change_y = self.maxspeed
         elif key == arcade.key.DOWN:
