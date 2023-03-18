@@ -24,6 +24,26 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Neural Net Sailer"
 
+class Player(arcade.Sprite):
+    """
+    Player class
+    """
+    def update(self):
+           # Move player.
+        # Remove these lines if physics engine is moving player.
+        self.center_x += self.change_x
+        self.center_y += self.change_y
+
+        # Check for out-of-bounds
+        if self.left < 0:
+            self.left = 0
+        elif self.right > SCREEN_WIDTH - 1:
+            self.right = SCREEN_WIDTH - 1
+
+        if self.bottom < 0:
+            self.bottom = 0
+        elif self.top > SCREEN_HEIGHT - 1:
+            self.top = SCREEN_HEIGHT - 1 
 class SailGame(arcade.Window):
     def __init__(self, width, height, title) -> None:
         super().__init__(width, height, title)
@@ -94,7 +114,7 @@ class SailGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        pass
+        self.player_list.update()
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -102,14 +122,33 @@ class SailGame(arcade.Window):
 
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
+        
+        Suppose the AI will just be able to call this
         """
-        pass
+
+         # If the player presses a key, update the speed
+        if key == arcade.key.UP:
+            self.player_sprite.change_y = self.maxspeed
+        elif key == arcade.key.DOWN:
+            self.player_sprite.change_y = -self.maxspeed
+        elif key == arcade.key.LEFT:
+            self.player_sprite.change_x = -self.maxspeed
+        elif key == arcade.key.RIGHT:
+            self.player_sprite.change_x = self.maxspeed
+
 
     def on_key_release(self, key, key_modifiers):
         """
         Called whenever the user lets off a previously pressed key.
         """
-        pass
+        # If a player releases a key, zero out the speed.
+        # This doesn't work well if multiple keys are pressed.
+        # Use 'better move by keyboard' example if you need to
+        # handle this.
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            self.player_sprite.change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.player_sprite.change_x = 0        
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
