@@ -19,24 +19,32 @@ import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from numpy import sin, cos
 import arcade # using this for the game
+import pandas as pd 
+from scipy.interpolate import interp1d
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Neural Net Sailer"
-
+WINDSPEED = 5
 class Boat(arcade.Sprite):
     """
     Player class
     """
     sail_line = 0.5 # between 0 and 1 defines how far the sail is in
-    
+    boat_data = pd.read_csv('speed.csv')
+    interp_velocity = interp1d(boat_data['angle'],boat_data['max velocity (wind fraction)'])
+
     def update(self):
         # Move player.
         # Remove these lines if physics engine is moving player.
         # Will need to add the accelaeration and velocity in here
-        self.center_x += self.change_x
-        self.center_y += self.change_y
-        #self.angle += degrees # nicely rotates the boat but needs control
+        velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360))
+        print(self.angle)
+        self.center_y += velocity*(sin(np.deg2rad(self.angle+90)))
+        self.center_x += velocity*(cos(np.deg2rad(self.angle+90)))
+        self.angle += self.change_angle
+        self.angle = self.angle%360 # no need to be greater than 360 
+
 
         # Check for out-of-bounds
         if self.left < 0:
@@ -59,7 +67,8 @@ class SailGame(arcade.Window):
         self.y_velocity = 0
         self.velocity = [self.x_velocity, self.y_velocity] # x,y velocty vector, assume boat always travels in direction of velocity
         self.position = [100,100] # x,y position
-        self.windvector = [-0.5,-0.5] # a simple wind vector # decomposed to cartesian
+        self.wind_angle = 90 # to the map, i.e. sout
+        self.wind_speed = 5 # knots
         self.maxspeed = 5 # m/s # boats wont go much faster then this
         self.MAXTIME = 5000 # maximum amount of time before race ends
         self.racefinished = False # finished flag
@@ -81,13 +90,6 @@ class SailGame(arcade.Window):
         
         pass
 
-    #def change_direction(self, rotation):
-    #    """
-    #    Will take an input to change direction
-    #    """
-    #    self.x_velocity = self.x_velocity*cos(rotation) - sin(rotation)*self.y_velocty
-    #    self.y_velocty = self.x_velocity*cos(rotation) + cos(rotation)*self.y_velocty
-    
     def setup_race_course(self):
         """
         Will set up the race course, may have this customisable in the future
@@ -144,10 +146,11 @@ class SailGame(arcade.Window):
             self.player_sprite.change_y = self.maxspeed
         elif key == arcade.key.DOWN:
             self.player_sprite.change_y = -self.maxspeed
+
         elif key == arcade.key.LEFT:
-            self.player_sprite.change_x = -self.maxspeed
+            self.player_sprite.change_angle = -2 # seems about right 
         elif key == arcade.key.RIGHT:
-            self.player_sprite.change_x = self.maxspeed
+            self.player_sprite.change_angle = 2
 
 
     def on_key_release(self, key, key_modifiers):
@@ -161,7 +164,7 @@ class SailGame(arcade.Window):
         if key == arcade.key.UP or key == arcade.key.DOWN:
             self.player_sprite.change_y = 0
         elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.player_sprite.change_x = 0        
+            self.player_sprite.change_angle = 0        
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
