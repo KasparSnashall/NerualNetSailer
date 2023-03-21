@@ -26,6 +26,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Neural Net Sailer"
 WINDSPEED = 5
+
 class Boat(arcade.Sprite):
     """
     Player class
@@ -33,18 +34,20 @@ class Boat(arcade.Sprite):
     sail_line = 0.5 # between 0 and 1 defines how far the sail is in
     boat_data = pd.read_csv('speed.csv')
     interp_velocity = interp1d(boat_data['angle'],boat_data['max velocity (wind fraction)'])
+    change_sail_line = 0
 
     def update(self):
         # Move player.
         # Remove these lines if physics engine is moving player.
-        # Will need to add the accelaeration and velocity in here
+        # Will need to add the acc and velocity in here
         velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360))
-        print(self.angle)
+
         self.center_y += velocity*(sin(np.deg2rad(self.angle+90)))
         self.center_x += velocity*(cos(np.deg2rad(self.angle+90)))
         self.angle += self.change_angle
         self.angle = self.angle%360 # no need to be greater than 360 
-
+        
+        self.sail_line += self.change_sail_line
 
         # Check for out-of-bounds
         if self.left < 0:
@@ -57,8 +60,6 @@ class Boat(arcade.Sprite):
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1 
         
-
-
 class SailGame(arcade.Window):
     def __init__(self, width, height, title) -> None:
         super().__init__(width, height, title)
@@ -143,9 +144,9 @@ class SailGame(arcade.Window):
          # This will in the future either control the tiller or control the line
          # The position will have to change dependent on acceleration
         if key == arcade.key.UP:
-            self.player_sprite.change_y = self.maxspeed
+            self.player_sprite.change_sail_line = 0.05
         elif key == arcade.key.DOWN:
-            self.player_sprite.change_y = -self.maxspeed
+            self.player_sprite.change_sail_line = -0.05
 
         elif key == arcade.key.LEFT:
             self.player_sprite.change_angle = -2 # seems about right 
@@ -162,7 +163,7 @@ class SailGame(arcade.Window):
         # Use 'better move by keyboard' example if you need to
         # handle this.
         if key == arcade.key.UP or key == arcade.key.DOWN:
-            self.player_sprite.change_y = 0
+            self.player_sprite.change_sail_line = 0
         elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.player_sprite.change_angle = 0        
 
