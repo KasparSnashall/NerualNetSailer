@@ -31,23 +31,25 @@ class Boat(arcade.Sprite):
     """
     Player class
     """
-    sail_line = 0.5 # between 0 and 1 defines how far the sail is in
+    sail_angle = 180 # angle of the sail 
     boat_data = pd.read_csv('speed.csv')
     interp_velocity = interp1d(boat_data['angle'],boat_data['max velocity (wind fraction)'])
-    change_sail_line = 0
+    change_sail_angle = 0
+    accel = 0
 
     def update(self):
         # Move player.
         # Remove these lines if physics engine is moving player.
         # Will need to add the acc and velocity in here
-        velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360))
+        velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360)) + self.accel
 
         self.center_y += velocity*(sin(np.deg2rad(self.angle+90)))
         self.center_x += velocity*(cos(np.deg2rad(self.angle+90)))
         self.angle += self.change_angle
         self.angle = self.angle%360 # no need to be greater than 360 
         
-        self.sail_line += self.change_sail_line
+        self.sail_angle += self.change_sail_angle
+        self.sail_angle = (self.sail_angle%180) # 0 to 180
 
         # Check for out-of-bounds
         if self.left < 0:
@@ -144,14 +146,16 @@ class SailGame(arcade.Window):
          # This will in the future either control the tiller or control the line
          # The position will have to change dependent on acceleration
         if key == arcade.key.UP:
-            self.player_sprite.change_sail_line = 0.05
+            self.player_sprite.change_sail_angle = 1
         elif key == arcade.key.DOWN:
-            self.player_sprite.change_sail_line = -0.05
+            self.player_sprite.change_sail_angle = -1
 
         elif key == arcade.key.LEFT:
             self.player_sprite.change_angle = -2 # seems about right 
+            self.player_sprite.accel = -0.05 # small penality for using rudder
         elif key == arcade.key.RIGHT:
             self.player_sprite.change_angle = 2
+            self.player_sprite.accel = -0.05
 
 
     def on_key_release(self, key, key_modifiers):
@@ -164,8 +168,10 @@ class SailGame(arcade.Window):
         # handle this.
         if key == arcade.key.UP or key == arcade.key.DOWN:
             self.player_sprite.change_sail_line = 0
+            
         elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.player_sprite.change_angle = 0        
+            self.player_sprite.change_angle = 0    
+            self.player_sprite.accel = 0    
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
