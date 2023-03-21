@@ -25,7 +25,7 @@ from scipy.interpolate import interp1d
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Neural Net Sailer"
-WINDSPEED = 5
+WINDSPEED = 2
 
 class Boat(arcade.Sprite):
     """
@@ -34,6 +34,7 @@ class Boat(arcade.Sprite):
     sail_angle = 180 # angle of the sail 
     boat_data = pd.read_csv('speed.csv')
     interp_velocity = interp1d(boat_data['angle'],boat_data['max velocity (wind fraction)'])
+    interp_liftcoeff = interp1d(boat_data['angle'],boat_data['lift coeff'])
     change_sail_angle = 0
     accel = 0
 
@@ -41,15 +42,21 @@ class Boat(arcade.Sprite):
         # Move player.
         # Remove these lines if physics engine is moving player.
         # Will need to add the acc and velocity in here
+        self.sail_angle += self.change_sail_angle
+        if self.sail_angle < 0:
+            self.sail_angle = 0
+        if self.sail_angle > 180:
+            self.sail_angle = 180
+    
         velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360)) + self.accel
+        angle_attack = abs(self.angle-self.sail_angle)%180
 
         self.center_y += velocity*(sin(np.deg2rad(self.angle+90)))
         self.center_x += velocity*(cos(np.deg2rad(self.angle+90)))
         self.angle += self.change_angle
-        self.angle = self.angle%360 # no need to be greater than 360 
+        self.angle = abs(self.angle%360) # no need to be greater than 360 
         
-        self.sail_angle += self.change_sail_angle
-        self.sail_angle = (self.sail_angle%180) # 0 to 180
+
 
         # Check for out-of-bounds
         if self.left < 0:
@@ -167,7 +174,7 @@ class SailGame(arcade.Window):
         # Use 'better move by keyboard' example if you need to
         # handle this.
         if key == arcade.key.UP or key == arcade.key.DOWN:
-            self.player_sprite.change_sail_line = 0
+            self.player_sprite.change_sail_angle = 0
             
         elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.player_sprite.change_angle = 0    
