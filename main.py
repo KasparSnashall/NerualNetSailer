@@ -26,6 +26,8 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Neural Net Sailer"
 WINDSPEED = 2
+WINDANGLE = 360
+WINDVECTOR = [WINDSPEED*cos(np.deg2rad(WINDANGLE)), WINDSPEED*sin(np.deg2rad(WINDANGLE))]
 
 class Boat(arcade.Sprite):
     """
@@ -37,6 +39,8 @@ class Boat(arcade.Sprite):
     interp_liftcoeff = interp1d(boat_data['angle'],boat_data['lift coeff'])
     change_sail_angle = 0
     accel = 0
+    velocity = 0
+    
 
     def update(self):
         # Move player.
@@ -45,19 +49,22 @@ class Boat(arcade.Sprite):
         self.sail_angle += self.change_sail_angle
         if self.sail_angle < 0:
             self.sail_angle = 0
-        if self.sail_angle > 180:
-            self.sail_angle = 180
-    
-        velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360)) + self.accel
-        angle_attack = abs(self.angle-self.sail_angle)%180
+        if self.sail_angle > 90: # relative to the boat direction
+            self.sail_angle = 90
 
-        self.center_y += velocity*(sin(np.deg2rad(self.angle+90)))
-        self.center_x += velocity*(cos(np.deg2rad(self.angle+90)))
+        movement_vector = [self.velocity*cos(np.deg2rad(self.angle)), self.velocity*sin(np.deg2rad(self.angle))]
+
+        self.velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360)) + self.accel
+        # need to work out the apprent wind vector
+        angle_attack = abs(self.angle)-self.sail_angle
+        print(angle_attack)
+        # probably need the apprent wind vector to determine angle of attack
+
+        self.center_y += self.velocity*(sin(np.deg2rad(self.angle+90)))
+        self.center_x += self.velocity*(cos(np.deg2rad(self.angle+90)))
         self.angle += self.change_angle
         self.angle = abs(self.angle%360) # no need to be greater than 360 
         
-
-
         # Check for out-of-bounds
         if self.left < 0:
             self.left = 0
