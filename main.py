@@ -39,7 +39,7 @@ class Boat(arcade.Sprite):
     interp_liftcoeff = interp1d(boat_data['angle'],boat_data['lift coeff'])
     change_sail_angle = 0
     accel = 0
-    velocity = 0
+
     
 
     def update(self):
@@ -52,9 +52,11 @@ class Boat(arcade.Sprite):
         if self.sail_angle > 90: # relative to the boat direction
             self.sail_angle = 90
 
-        movement_vector = [self.velocity*cos(np.deg2rad(self.angle)), self.velocity*sin(np.deg2rad(self.angle))]
+
+        
 
         self.velocity = WINDSPEED*(self.interp_velocity(abs(self.angle)%360)) + self.accel
+        self.move_vector = [self.velocity*cos(np.deg2rad(self.angle)), self.velocity*sin(np.deg2rad(self.angle))]
         # need to work out the apprent wind vector
         angle_attack = abs(self.angle)-self.sail_angle
         print(angle_attack)
