@@ -13,10 +13,23 @@ No indication on the acceleration though so this will have to be thought about. 
 
 https://physicstoday.scitation.org/doi/pdf/10.1063/1.2883908 
 
+Additionally the wikipedia page on sails seems to be pretty well stocked with information.
+https://en.wikipedia.org/wiki/Forces_on_sails 
+
 ## How will this be made
 I intend to write this whole thing in python 3.10. I dont want to make it too complex but it will be interesting to see how the time element of the game plays in reality. 
 
 After some intial research it appears reinforcement learning such as deep Q learning might be exactly what I need to train my AI to play. Of course the game needs to be written first. Will use Keras API as the basis for the machine learning, I suspect my GPU will be getting a work out shortly. 
+
+## Current tasks
+* Add main line indicator
+* Add boat acceleration
+* Add boat momentum
+* Add race track
+* Add conditions on passing a bouy
+* Add in bouy class
+* Create headless version
+
 
 
 
